@@ -13,6 +13,7 @@ import { initData } from './stores/data'
 import { refreshWorkspace } from './stores/workspace'
 import { toast } from './stores/ui'
 import { auth, refreshAuthStatus, startAuthWatch } from './stores/auth'
+import { IS_WEB } from './api/http'
 import { openDrawer, session, setCursor } from './stores/session'
 import { todayKey, shiftMonth } from './utils/date'
 
@@ -43,8 +44,10 @@ async function boot() {
   booting.value = true
   bootError.value = ''
   try {
-    await refreshAuthStatus()
-    if (!auth.authenticated) return
+    if (!IS_WEB) {
+      await refreshAuthStatus()
+      if (!auth.authenticated) return
+    }
     await initApp()
     syncTheme()
     await initData()
@@ -113,7 +116,7 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 onMounted(async () => {
-  startAuthWatch()
+  if (!IS_WEB) startAuthWatch()
   await boot()
   window.addEventListener('keydown', onKeydown)
 })

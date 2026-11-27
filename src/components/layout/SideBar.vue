@@ -10,6 +10,7 @@ import { fmtHours } from '../../utils/format'
 import { startOfWeek, addDays } from 'date-fns'
 import { home, setHomeEditing } from '../../stores/home'
 import { auth, lockNow } from '../../stores/auth'
+import { IS_WEB } from '../../api/http'
 
 const route = useRoute()
 const router = useRouter()
@@ -176,7 +177,14 @@ function customizeHome() {
     </div>
 
     <div class="side-foot">
-      <div class="account-row">
+      <div v-if="IS_WEB" class="account-row">
+        <span class="avatar">知</span>
+        <span class="account-meta">
+          <b>网页版</b>
+          <small>数据保存在本机浏览器</small>
+        </span>
+      </div>
+      <div v-else class="account-row">
         <span class="avatar">{{ (auth.username || '知').slice(0, 1).toUpperCase() }}</span>
         <span class="account-meta">
           <b>{{ auth.username || '本机账户' }}</b>

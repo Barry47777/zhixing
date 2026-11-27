@@ -14,7 +14,38 @@ export class ApiError extends Error {
 
 const TIMEOUT = 20000;
 
+/** 网页版：请求在本地虚拟后端处理，不走网络 */
+export const IS_WEB = (import.meta as any).env?.VITE_WEB === '1';
+let webBackend: typeof import('../web/backend') | null = null;
+async function getWebBackend() {
+  if (!webBackend) webBackend = await import('../web/backend');
+  return webBackend;
+}
+
 async function request<T>(method: string, path: string, body?: unknown, opts: { timeout?: number; signal?: AbortSignal } = {}): Promise<T> {
+  if (IS_WEB) {
+    try {
+      const backend = await getWebBackend();
+      const query: Record<string, any> = {};
+      const qIndex = path.indexOf('?');
+      let cleanPath = path;
+      if (qIndex >= 0) {
+        new URLSearchParams(path.slice(qIndex + 1)).forEach((v, k) => { query[k] = v; });
+        cleanPath = path.slice(0, qIndex);
+      }
+      let result = await backend.apiRequest(method, cleanPath, query, body);
+      // 导出接口：直接触发浏览器下载
+      if (cleanPath === '/api/export' && result._download) {
+        backend.downloadText(result._download.filename, result._download.data, result._download.mime);
+      }
+      if (!result.ok) throw new ApiError(result.error || `请求失败`, result.status || 400, result);
+      const { status: _s, error: _e, _download: _d, ...rest } = result;
+      return rest as T;
+    } catch (err: any) {
+      if (err instanceof ApiError) throw err;
+      throw new ApiError(err?.message || '本地处理失败', 0, err);
+    }
+  }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), opts.timeout ?? TIMEOUT);
   if (opts.signal) {

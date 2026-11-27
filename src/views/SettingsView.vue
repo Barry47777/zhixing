@@ -4,7 +4,7 @@ import Icon from '../components/base/Icon.vue'
 import DragNumber from '../components/base/DragNumber.vue'
 import type { MigrateInspect, Snapshot, StorageInfo } from '../types'
 import { api } from '../api'
-import { fileToDataUrl } from '../api/http'
+import { fileToDataUrl, IS_WEB, http } from '../api/http'
 import {
   clearEverything, data, demoSeededAt, emptyTrash, loadAll, purgeEntry, restoreEntry, trashedEntries,
 } from '../stores/data'
@@ -89,7 +89,17 @@ function setAttachmentLimit(v: number) {
   limitTimer = window.setTimeout(() => { void patchSettings({ attachmentLimitMB: v }) }, 400)
 }
 
-function exportBackup(withFiles: boolean) {
+async function exportBackup(withFiles: boolean) {
+  if (IS_WEB) {
+    // 网页版：导出在本地生成并由 http 层触发下载
+    try {
+      await http.get('/api/export?format=backup&scope=all')
+      toast(withFiles ? '正在下载完整备份' : '正在下载 JSON 数据', 'success')
+    } catch (err) {
+      toast('导出失败：' + (err instanceof Error ? err.message : String(err)), 'error')
+    }
+    return
+  }
   window.location.href = api.transfer.exportUrl('backup', { attachments: withFiles ? 1 : 0 })
   toast(withFiles ? '正在下载完整备份' : '正在下载 JSON 数据', 'success')
 }
@@ -518,8 +528,8 @@ const shortcuts = [
         </div>
       </section>
 
-      <!-- 本机账户与安全 -->
-      <section class="set-card card">
+      <!-- 本机账户与安全（网页版无本机账户，隐藏） -->
+      <section v-if="!IS_WEB" class="set-card card">
         <header class="set-head">
           <div>
             <h3>本机账户与安全</h3>

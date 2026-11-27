@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
 
+const IS_WEB = process.env.VITE_WEB === '1';
+
 export default defineConfig({
   plugins: [vue()],
   base: './',
@@ -21,7 +23,7 @@ export default defineConfig({
   },
   build: {
     target: 'es2020',
-    outDir: 'dist',
+    outDir: IS_WEB ? 'gh-pages' : 'dist',
     assetsInlineLimit: 8192,
     chunkSizeWarningLimit: 1200,
   },

@@ -14,7 +14,9 @@
     "start": "node server/index.js --open",
     "serve": "node server/index.js",
     "test": "node scripts/acceptance.mjs",
-    "build:exe": "node scripts/build-exe.mjs"
+    "build:exe": "node scripts/build-exe.mjs",
+    "build:web": "node scripts/build-web.mjs",
+    "gen:web-libs": "node scripts/gen-web-libs.mjs"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",

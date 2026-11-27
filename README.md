@@ -40,6 +40,28 @@
 - 打包：esbuild + Node SEA + postject
 - 富文本消毒：服务端白名单重建，不复制来源属性，天然免疫 `on*` / `javascript:`
 
+## 在线网页版
+
+不想安装任何东西？直接用浏览器打开：<https://barry47777.github.io/zhixing/>
+
+网页版是纯前端版本：所有数据存在**你自己的浏览器**（IndexedDB）里，不上传服务器、不需要登录、刷新和关掉浏览器都不会丢。第一次打开会自动生成一份演示数据，方便体验。
+
+和桌面 exe 版的区别：
+
+- 数据存在浏览器本地，**不跨设备同步**，也和 exe 版的 `data/` 目录**互不通用**（两边通过「设置 → 导出 JSON / 导入」互通）
+- 没有本机账户登录（网页版无需登录）
+- 图片和附件以 data URL 存在浏览器里，单个文件太大可能超出浏览器配额
+- 换浏览器或清理浏览器数据前，记得先在设置里导出 JSON 备份
+
+网页版的源码在 `src/web/`，构建命令：
+
+```bash
+npm install
+npm run build:web      # 生成 gh-pages/ 目录
+```
+
+先把服务端的纯函数库转成浏览器 ESM（`node scripts/gen-web-libs.mjs`，已包含在构建命令里），再由 Vite 打包。核心是把 `/api/*` 请求拦截到浏览器内的虚拟后端（`src/web/backend.ts`），用 IndexedDB 替代文件存储。
+
 ## 快速开始
 
 需要 Node.js 18 或更新版本。
@@ -114,6 +136,8 @@ zhixing/
 | `npm test` | 验收脚本（自起隔离服务，跑完清理） |
 | `node scripts/data-audit.mjs` | 数据安全压测：连续/并发写、强杀重启、备份导入 |
 | `npm run build:exe` | 打包 Windows 单文件 exe |
+| `npm run build:web` | 构建 GitHub Pages 网页版到 `gh-pages/` |
+| `node scripts/gen-web-libs.mjs` | 把服务端纯函数库转成浏览器 ESM |
 
 ## 许可
 

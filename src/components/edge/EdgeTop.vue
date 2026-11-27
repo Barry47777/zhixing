@@ -7,6 +7,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { edgeTheme, setEdgeTheme } from '../../stores/edge'
 import { lockNow } from '../../stores/auth'
+import { IS_WEB } from '../../api/http'
 
 const props = defineProps<{
   zone: 'inspiration' | 'review'
@@ -67,7 +68,7 @@ defineExpose({ focusSearch })
       <button class="icon-btn" title="底线（不做清单）" aria-label="底线" @click="emit('base')">
         <svg viewBox="0 0 24 24" class="ic"><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h10" /></svg>
       </button>
-      <button class="icon-btn" title="立即锁定，回到登录页" aria-label="立即锁定" @click="lockNow">
+      <button v-if="!IS_WEB" class="icon-btn" title="立即锁定，回到登录页" aria-label="立即锁定" @click="lockNow">
         <svg viewBox="0 0 24 24" class="ic"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5" /><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5" /><path d="M12 14v3" /></svg>
       </button>
       <button class="icon-btn" title="切换主题" aria-label="切换主题" @click="toggleTheme">
