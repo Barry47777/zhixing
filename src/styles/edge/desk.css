@@ -1,0 +1,209 @@
+/* ============================================================
+   复盘区重构层 v2：四个一级视图 / 复盘台子页 / 详情抽屉 / 补全池 / 周回顾
+   只加新东西，不改 styles.css 与 feat.css 里的既有组件
+   ============================================================ */
+
+/* ---------- 复盘区二级导航：捕捉 / 复盘台 / 回看 / 尺子 ---------- */
+.review-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 16px 0 14px;
+  padding: 4px;
+  border: 1px solid var(--hair);
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, .018);
+  overflow-x: auto;
+}
+[data-theme="light"] .review-nav { background: rgba(16, 20, 35, .025); }
+
+.rn-btn {
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  border: 0;
+  border-radius: 9px;
+  padding: 9px 14px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-dim);
+  background: transparent;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.rn-btn:hover { color: var(--text); background: rgba(150, 180, 255, .08); }
+.rn-btn.on {
+  color: var(--text);
+  background: rgba(159, 228, 255, .14);
+  box-shadow: inset 0 0 0 1px rgba(159, 228, 255, .26);
+}
+.rn-num {
+  min-width: 17px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 10.5px;
+  line-height: 16px;
+  text-align: center;
+  color: var(--ice);
+  background: rgba(159, 228, 255, .13);
+}
+.rn-num:empty { display: none; }
+
+/* ---------- 复盘台子页 ---------- */
+/* ---------- 回看 ---------- */
+
+/* ---------- 记录详情抽屉 ---------- */
+.note-drawer-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(4, 6, 12, .52);
+  backdrop-filter: blur(2px);
+}
+.note-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 61;
+  width: min(420px, 94vw);
+  height: 100vh;
+  overflow-y: auto;
+  padding: 18px 20px 40px;
+  border-left: 1px solid var(--hair);
+  background: #0b0e15;
+  transform: translateX(102%);
+  transition: transform var(--dur-mid) var(--ease);
+}
+[data-theme="light"] .note-drawer { background: #f7f8fb; }
+.note-drawer.open { transform: none; }
+
+.nd-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--hair);
+}
+.nd-kind {
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: .04em;
+  color: var(--ice);
+}
+.nd-close, .fa-close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(150, 180, 255, .08);
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.nd-close:hover, .fa-close:hover { color: var(--text); background: rgba(150, 180, 255, .16); }
+.nd-close svg, .fa-close svg { width: 14px; height: 14px; }
+
+.nd-sec { margin: 0 0 16px; }
+.nd-sec > h4 {
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  color: var(--text-mute);
+  text-transform: uppercase;
+}
+.nd-rows { display: grid; gap: 6px; }
+.nd-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12.5px;
+}
+.nd-row > span:first-child { color: var(--text-mute); flex: 0 0 auto; }
+.nd-row > span:last-child { color: var(--text); text-align: right; }
+.nd-text {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text-dim);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.nd-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.nd-chips .ref-row { margin: 0; }
+
+/* ---------- 卡片瘦身：一个主操作 ---------- */
+.card-act {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid rgba(159, 228, 255, .30);
+  border-radius: 7px;
+  padding: 5px 11px;
+  font-size: 12px;
+  color: var(--ice);
+  background: rgba(159, 228, 255, .07);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.card-act:hover { background: rgba(159, 228, 255, .15); }
+[data-theme="light"] .card-act { color: #0d6c92; border-color: rgba(13, 108, 146, .30); }
+
+.card-act.sub {
+  border-color: var(--hair);
+  color: var(--text-dim);
+  background: transparent;
+}
+.card-act.sub:hover { color: var(--text); background: rgba(150, 180, 255, .08); }
+
+/* 卡片上被收进抽屉的「还有更多」提示 */
+.note-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  padding: 4px 0;
+  font-size: 11.5px;
+  color: var(--text-mute);
+  background: transparent;
+  cursor: pointer;
+}
+.note-more:hover { color: var(--ice); }
+
+/* ---------- 补全池：一次只问一句 ---------- */
+
+/* ---------- 卡片正面：主干一行 + 一个主操作 ---------- */
+/* 归因视图本身就是一条时间流，所以排列 / 时间 / 30 天柱条在复盘区照样保留 */
+/* 排列与时间序列是灵感便签墙的工具；复盘区用复盘台的子页筛选，不让两套筛选并排出现 */
+
+.note-meta-lead {
+  margin: 6px 0 2px;
+  gap: 6px;
+}
+
+.note-act {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0 2px;
+}
+.note-act .grow-row { margin: 0; }
+
+/* ---------- 详情是复盘卡的主要入口 ---------- */
+/* 详情按钮不能等 hover 才出现 */
+html[data-zone="review"] .note-actions { opacity: 1; transform: none; }
+
+/* ---------- 窄屏 ---------- */
+@media (max-width: 720px) {
+  .rn-btn { padding: 8px 10px; font-size: 12.5px; }
+  .note-drawer { width: 100vw; }
+}

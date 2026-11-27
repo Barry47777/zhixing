@@ -1,0 +1,589 @@
+/* ============================================================
+   复盘 · Edge — 科技层（tech layer）
+   在 styles.css 之上做两件事：
+   1) 把调性从「暖紫暮光」拉到「冷器械」：更深的底、电紫→冰蓝的强调、
+      等宽数字与微标签、细网格地平线。
+   2) 封面：2.8 屏的分场短片（冷启动 → 冻结 → 盲卡 → 四段 → 落座）。
+
+   只读令牌，不改组件结构；app.js 一行未动。
+   ============================================================ */
+
+/* ---------- 1. 令牌 ---------- */
+:root {
+  --ice: #9fe4ff;
+  --ice-deep: #38bdf8;
+
+  --accent: #7c8bff;
+  --accent-2: #22d3ee;
+  --accent-3: #f5c451;
+  --grad: linear-gradient(115deg, #4e5bff 0%, #22d3ee 58%, #8b5cf6 100%);
+
+  --bg: #06070c;
+  --bg-soft: #0a0c13;
+  --text: #edf0fa;
+  --text-dim: #9aa3bd;
+  --text-mute: #79819a;
+
+  --r-lg: 18px;
+  --r-md: 14px;
+  --r-sm: 10px;
+
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  --hair: rgba(150, 180, 255, .12);
+  --hair-strong: rgba(150, 180, 255, .26);
+
+  --ice-dim: rgba(159, 228, 255, .62);
+  --ice-line: rgba(159, 228, 255, .30);
+  --ice-line-bright: rgba(159, 228, 255, .46);
+  --ice-line-2: rgba(159, 228, 255, .20);
+  --ice-line-3: rgba(159, 228, 255, .13);
+  --grid-line: rgba(124, 139, 255, .22);
+  --grid-line-fine: rgba(124, 139, 255, .08);
+}
+
+[data-theme="light"] {
+  --accent: #4f5bdb;
+  --accent-2: #0a86a8;
+  --accent-3: #a9761a;
+  --bg: #f4f6fb;
+  --bg-soft: #ffffff;
+  --text: #101423;
+  --text-dim: #525b74;
+  --text-mute: #6b748c;
+  --hair: rgba(24, 38, 78, .14);
+  --hair-strong: rgba(24, 38, 78, .28);
+
+  --ice-dim: rgba(23, 84, 122, .55);
+  --ice-line: rgba(40, 70, 140, .30);
+  --ice-line-2: rgba(40, 70, 140, .20);
+  --ice-line-3: rgba(40, 70, 140, .13);
+  --grid-line: rgba(40, 70, 140, .13);
+  --grid-line-fine: rgba(40, 70, 140, .06);
+}
+
+::selection { background: rgba(124, 139, 255, .32); color: #fff; }
+
+/* ---------- 2. 工作台底：一张只属于器械的网格 ----------
+   光斑还在（.aurora 未动），网格压在最底下，只在顶部第一屏可见，
+   往下淡出，避免长列表滚动时满屏线条。 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--hair) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--hair) 1px, transparent 1px);
+  background-size: 76px 76px;
+  -webkit-mask-image: radial-gradient(120% 78% at 50% 0%, #000 12%, transparent 72%);
+  mask-image: radial-gradient(120% 78% at 50% 0%, #000 12%, transparent 72%);
+  opacity: .5;
+}
+
+[data-theme="light"] body::before { opacity: .35; }
+
+/* ---------- 3. 工作台上的器械细节 ---------- */
+.topbar { border-radius: var(--r-md); }
+
+.brand-text h1 { letter-spacing: -.01em; }
+
+.mark {
+  font-family: var(--mono);
+  border: 1px solid var(--hair-strong);
+  border-radius: 9px;
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  color: var(--ice);
+  cursor: pointer;
+  transition: border-color var(--dur-mid) var(--ease), color var(--dur-mid) var(--ease), box-shadow var(--dur-mid) var(--ease);
+}
+
+.mark:hover,
+.mark:focus-visible {
+  border-color: var(--ice);
+  box-shadow: 0 0 0 1px rgba(159, 228, 255, .25), 0 8px 26px -18px var(--ice);
+}
+
+.zone-pill {
+  background: linear-gradient(180deg, rgba(124, 139, 255, .26), rgba(34, 211, 238, .10));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16), 0 8px 24px -18px var(--accent);
+}
+
+.zone-tab b { letter-spacing: .01em; }
+
+.capture-card { border-color: var(--hair); }
+
+.capture-card:focus-within {
+  border-color: rgba(159, 228, 255, .45);
+  box-shadow: 0 0 0 1px rgba(159, 228, 255, .18), var(--shadow-raise);
+}
+
+.stat b,
+.note-time,
+.foot,
+.capture-tip kbd,
+.cv-tag,
+.kbd-mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat b { letter-spacing: -.02em; }
+
+.foot { letter-spacing: .04em; font-size: 11px; }
+
+.note:hover { border-color: var(--hair-strong); }
+
+.empty-mark { color: var(--ice); }
+
+/* 滚动条：细、冷、不抢戏 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(150, 180, 255, .28) transparent;
+}
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(150, 180, 255, .22);
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(150, 180, 255, .38); background-clip: padding-box; }
+
+:focus-visible {
+  outline: 2px solid var(--ice);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   封面 —— 纯动效，无一字
+   四拍：网格推进 → 扫描面上行 → 节点吸附 → 空间压平锁定
+   所有变量由 tech.js 写在 .cover 上：--cv-drift / --cv-freeze /
+   --cv-scan / --cv-beam-a / --k
+   ============================================================ */
+
+.cover {
+  position: relative;
+  height: 170vh;
+  isolation: isolate;
+}
+
+/* 被跳过（reload 后直接进工作台）：整块不参与布局 */
+html.cover-skipped .cover,
+html.cover-skipped .tech-seam { display: none; }
+
+.cv-pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: block;
+  /* 不透明：工作台的极光不能透上来，否则暖色会把冷调毁掉 */
+  background:
+    radial-gradient(120% 80% at 50% 8%, rgba(58, 74, 160, .30), transparent 62%),
+    radial-gradient(90% 60% at 50% 104%, rgba(34, 211, 238, .14), transparent 66%),
+    linear-gradient(180deg, #05060b 0%, #070911 48%, #05060b 100%);
+}
+
+.cv-pin::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(115% 92% at 50% 46%, transparent 42%, rgba(3, 4, 8, .72) 100%);
+  z-index: 4;
+}
+
+.cv-field {
+  position: absolute;
+  inset: 0;
+  perspective: 900px;
+  perspective-origin: 50% 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ---------- 地面网格：3D 推进，冻结时压平成蓝图 ---------- */
+.cv-grid {
+  position: absolute;
+  left: -70%;
+  right: -70%;
+  bottom: -6%;
+  height: 74%;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 68px 68px;
+  background-position: center bottom;
+  transform-origin: 50% 100%;
+  transform:
+    rotateX(calc(64deg - 60deg * var(--cv-freeze, 0)))
+    translateZ(calc(var(--cv-drift, 0) * 30px))
+    translateY(calc(var(--cv-drift, 0) * -3%))
+    scale(calc(1 + .12 * var(--cv-drift, 0)));
+  -webkit-mask-image: linear-gradient(to top, #000 6%, rgba(0, 0, 0, .78) 34%, rgba(0, 0, 0, .18) 72%, transparent 96%);
+  mask-image: linear-gradient(to top, #000 6%, rgba(0, 0, 0, .78) 34%, rgba(0, 0, 0, .18) 72%, transparent 96%);
+}
+
+/* 网格之上再压一层细格：冻结后浮出来，像制图底稿 */
+.cv-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--grid-line-fine) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line-fine) 1px, transparent 1px);
+  background-size: 19px 19px;
+  opacity: calc(.55 * var(--cv-freeze, 0));
+}
+
+/* ---------- 灭点：一条发亮的水平线 ---------- */
+.cv-horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 36%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ice-dim) 22%, var(--ice) 50%, var(--ice-dim) 78%, transparent);
+  opacity: calc(.24 + .46 * var(--cv-freeze, 0));
+  box-shadow: 0 0 22px 1px rgba(159, 228, 255, .18);
+  /* 中间断开：地平线从装置背后过，不切过它 */
+  -webkit-mask-image: linear-gradient(90deg, #000 0 38%, transparent 45% 55%, #000 62% 100%);
+  mask-image: linear-gradient(90deg, #000 0 38%, transparent 45% 55%, #000 62% 100%);
+}
+
+/* ---------- 光雾 ---------- */
+.cv-glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(38px);
+}
+.cv-glow-a {
+  width: 46vmax; height: 34vmax;
+  left: 50%; top: 46%;
+  transform: translate(calc(-50% + (var(--cv-mx, 0) * -14px)), calc(-50% + (var(--cv-my, 0) * -10px)));
+  background: radial-gradient(circle at 50% 50%, rgba(124, 139, 255, .30), transparent 66%);
+  opacity: calc(.55 + .45 * var(--cv-freeze, 0));
+}
+.cv-glow-b {
+  width: 34vmax; height: 26vmax;
+  left: 50%; top: 50%;
+  transform: translate(calc(-50% + (var(--cv-mx, 0) * 18px)), calc(-50% + (var(--cv-my, 0) * 12px)));
+  background: radial-gradient(circle at 50% 50%, rgba(34, 211, 238, .26), transparent 64%);
+  opacity: calc(.42 + .30 * var(--cv-freeze, 0));
+}
+
+/* ---------- 底部折线：低位、克制 ---------- */
+.cv-ridge {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  width: 100%; height: 32%;
+  opacity: .55;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 42%);
+  mask-image: linear-gradient(to top, transparent 0%, #000 42%);
+}
+.cv-ridge-line {
+  fill: none;
+  stroke: var(--ice-dim);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  opacity: calc(.55 + .45 * var(--cv-freeze, 0));
+  filter: drop-shadow(0 0 6px rgba(159, 228, 255, .35));
+}
+.cv-ridge-fill {
+  fill: url(#cvRidgeFill);
+  stroke: none;
+  opacity: calc(.5 + .4 * var(--cv-freeze, 0));
+}
+
+/* ---------- 四角准星 ---------- */
+.cv-hud { position: absolute; inset: 16px; pointer-events: none; z-index: 3; }
+.cv-tick {
+  position: absolute;
+  width: 18px; height: 18px;
+  border: 1px solid var(--hair-strong);
+  border-style: solid;
+  border-color: var(--hair-strong);
+  border-width: 0;
+  opacity: .7;
+}
+.cv-tick.tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
+.cv-tick.tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
+.cv-tick.bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
+.cv-tick.br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
+
+/* ---------- 中心装置：三层方框旋转 → 锁定 ---------- */
+.cv-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+.cv-core {
+  position: relative;
+  width: min(42vmin, 296px);
+  aspect-ratio: 1 / 1;
+  transform: translateY(calc(-4vh + var(--cv-mx, 0) * 6px));
+  will-change: transform;
+}
+
+.cv-sq {
+  position: absolute;
+  border: 1px solid var(--ice-line);
+  border-radius: 2px;
+  transform-origin: 50% 50%;
+}
+/* 静止是菱（45°），冻结时锁正成方：形状本身就在叙事 */
+.cv-sq.s1 {
+  inset: 0;
+  transform: rotate(calc((1 - var(--cv-freeze, 0)) * (45deg + var(--cv-drift, 0) * 40deg)));
+  border-color: var(--ice-line-bright);
+  opacity: calc(.70 + .30 * var(--cv-freeze, 0));
+  box-shadow: 0 0 46px -16px rgba(159, 228, 255, .55), inset 0 0 34px -20px rgba(159, 228, 255, .5);
+}
+.cv-sq.s2 {
+  inset: 15%;
+  transform: rotate(calc((1 - var(--cv-freeze, 0)) * (-45deg - var(--cv-drift, 0) * 40deg)));
+  border-color: var(--ice-line-2);
+  opacity: calc(.55 + .45 * var(--cv-freeze, 0));
+}
+.cv-sq.s3 {
+  inset: 31%;
+  transform: rotate(calc((1 - var(--cv-freeze, 0)) * (22.5deg + var(--cv-drift, 0) * 60deg)));
+  border-color: var(--ice-line-3);
+  opacity: calc(.45 + .55 * var(--cv-freeze, 0));
+}
+
+/* 中心点：一颗呼吸的光点，冻结时钉住 */
+.cv-pip {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 7px; height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--ice);
+  box-shadow: 0 0 16px 2px rgba(159, 228, 255, .85), 0 0 3px #fff inset;
+  animation: cvPip 2.6s var(--ease) infinite;
+}
+.is-frozen .cv-pip { animation: none; }
+
+@keyframes cvPip {
+  0%, 100% { transform: scale(.72); opacity: .55; }
+  50%      { transform: scale(1.18); opacity: 1; }
+}
+
+/* 冻结时四角长出短刻线 */
+.cv-core::before,
+.cv-core::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  border: 1px solid transparent;
+  border-image: none;
+  opacity: 0;
+}
+.cv-core::before {
+  border-top-color: var(--ice-line-3);
+  border-bottom-color: var(--ice-line-3);
+  transform: scaleX(calc(.4 + .6 * var(--cv-freeze, 0)));
+  opacity: calc(.9 * var(--cv-freeze, 0));
+}
+.cv-core::after {
+  border-left-color: var(--ice-line-3);
+  border-right-color: var(--ice-line-3);
+  transform: scaleY(calc(.4 + .6 * var(--cv-freeze, 0)));
+  opacity: calc(.9 * var(--cv-freeze, 0));
+}
+
+/* ---------- 节点：扫描面经过一个，就亮一个 ---------- */
+.cv-nodes { position: absolute; inset: 0; pointer-events: none; }
+.cv-nodes i {
+  position: absolute;
+  left: var(--nx); top: var(--ny);
+  width: 7px; height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  background: var(--ice);
+  box-shadow: 0 0 14px 2px rgba(159, 228, 255, .8), 0 0 0 3px rgba(159, 228, 255, .10);
+  opacity: var(--snap, 0);
+  transform: scale(calc(.4 + .6 * var(--snap, 0))) rotate(45deg);
+}
+
+/* ---------- 扫描面 ---------- */
+.cv-scan {
+  position: absolute;
+  left: 0; right: 0;
+  top: 0;
+  height: 1px;
+  transform: translateY(var(--cv-scan, 110vh));
+  background: linear-gradient(90deg, transparent, rgba(159, 228, 255, .08) 14%, rgba(159, 228, 255, .85) 50%, rgba(159, 228, 255, .08) 86%, transparent);
+  opacity: calc(.15 + .85 * var(--cv-beam-a, 0));
+  mix-blend-mode: screen;
+  z-index: 3;
+}
+.cv-scan::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 0;
+  height: 26vh;
+  background: linear-gradient(to top, rgba(159, 228, 255, .10), transparent);
+  opacity: calc(.5 * var(--cv-beam-a, 0));
+}
+
+/* ---------- 底部刻度尺：器械感，不是装饰 ---------- */
+.cv-hud::after {
+  content: "";
+  position: absolute;
+  left: 50%; bottom: -6px;
+  width: min(560px, 62vw);
+  height: 9px;
+  margin-left: min(-280px, -31vw);
+  background-image:
+    repeating-linear-gradient(90deg, var(--hair-strong) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, var(--ice-line-2) 0 1px, transparent 1px 140px);
+  background-size: 100% 4px, 100% 9px;
+  background-position: bottom, bottom;
+  background-repeat: repeat-x;
+  opacity: calc(.35 + .4 * var(--cv-freeze, 0));
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+}
+
+/* ---------- 底部提示：一根下滑的短线 ---------- */
+.cv-hint {
+  position: absolute;
+  left: 50%; bottom: clamp(18px, 3.4vh, 34px);
+  width: 22px; height: 26px;
+  margin-left: -11px;
+  overflow: hidden;
+  opacity: calc(.85 - .85 * var(--cv-freeze, 0));
+}
+.cv-hint i {
+  position: absolute;
+  left: 50%;
+  top: -14px;
+  width: 1px; height: 14px;
+  margin-left: -.5px;
+  background: linear-gradient(to bottom, transparent, var(--ice));
+  animation: cvHint 2.1s cubic-bezier(.5, 0, .5, 1) infinite;
+}
+@keyframes cvHint {
+  0%   { transform: translateY(0); opacity: 0; }
+  25%  { opacity: 1; }
+  100% { transform: translateY(40px); opacity: 0; }
+}
+
+/* ---------- 右侧进度细轨 ---------- */
+.cv-rail {
+  position: absolute;
+  right: clamp(10px, 1.6vw, 22px);
+  top: 22vh;
+  bottom: 22vh;
+  width: 1px;
+  background: var(--hair);
+  pointer-events: none;
+  z-index: 3;
+}
+.cv-rail i {
+  position: absolute;
+  left: 0; top: 0;
+  width: 1px;
+  height: calc(var(--cv-drift, 0) * 100%);
+  background: linear-gradient(to bottom, var(--ice), rgba(159, 228, 255, 0));
+  box-shadow: 0 0 10px rgba(159, 228, 255, .6);
+}
+
+/* ============================================================
+   接缝：页面级的水平断口（无文字）
+   ============================================================ */
+.tech-seam {
+  position: relative;
+  height: 1px;
+  margin: 0 auto;
+  max-width: 1200px;
+  background: linear-gradient(90deg, transparent, var(--hair-strong) 22%, var(--hair-strong) 78%, transparent);
+}
+.tech-seam i {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 5px; height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  background: var(--ice-dim);
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px 1px rgba(159, 228, 255, .35);
+}
+
+/* ============================================================
+   亮色主题
+   ============================================================ */
+[data-theme="light"] .cv-grid {
+  opacity: .82;
+}
+[data-theme="light"] .cv-horizon {
+  background: linear-gradient(90deg, transparent, rgba(23, 84, 122, .30) 18%, rgba(23, 84, 122, .62) 50%, rgba(23, 84, 122, .30) 82%, transparent);
+  box-shadow: 0 0 22px 1px rgba(23, 84, 122, .12);
+}
+[data-theme="light"] .cv-glow-a { background: radial-gradient(circle at 50% 50%, rgba(64, 88, 200, .16), transparent 66%); }
+[data-theme="light"] .cv-glow-b { background: radial-gradient(circle at 50% 50%, rgba(13, 127, 168, .14), transparent 64%); }
+[data-theme="light"] .cv-ridge-line { stroke: #2b8fd0; }
+[data-theme="light"] .cv-ridge-fill { opacity: .40; }
+[data-theme="light"] .cv-sq.s1 { border-color: rgba(40, 70, 140, .34); box-shadow: 0 0 30px -14px rgba(40, 70, 140, .5); }
+[data-theme="light"] .cv-sq.s2 { border-color: rgba(40, 70, 140, .24); }
+[data-theme="light"] .cv-sq.s3 { border-color: rgba(40, 70, 140, .18); }
+[data-theme="light"] .cv-pip { background: #17547a; box-shadow: 0 0 14px 2px rgba(23, 84, 122, .45); }
+[data-theme="light"] .cv-nodes i { background: #17547a; box-shadow: 0 0 10px 1px rgba(23, 84, 122, .35); }
+[data-theme="light"] .cv-scan {
+  background: linear-gradient(90deg, transparent, rgba(23, 84, 122, .10) 14%, rgba(23, 84, 122, .55) 50%, rgba(23, 84, 122, .10) 86%, transparent);
+  mix-blend-mode: multiply;
+}
+[data-theme="light"] .cv-scan::before { background: linear-gradient(to top, rgba(23, 84, 122, .08), transparent); }
+[data-theme="light"] .cv-hint i { background: linear-gradient(to bottom, transparent, #17547a); }
+[data-theme="light"] .cv-rail i { background: linear-gradient(to bottom, #17547a, rgba(23, 84, 122, 0)); box-shadow: 0 0 8px rgba(23, 84, 122, .35); }
+
+/* ============================================================
+   响应式
+   ============================================================ */
+@media (max-width: 860px) {
+  .cover { height: 150vh; }
+  .cv-core { width: min(52vmin, 230px); }
+  .cv-grid { background-size: 58px 58px; left: -80%; right: -80%; }
+  .cv-grid::after { background-size: 14.5px 14.5px; }
+  .cv-horizon { bottom: 44%; left: 0; right: 0; }
+  .cv-ridge { height: 24%; opacity: .34; }
+  .cv-hud { inset: 10px; }
+  .cv-tick { width: 13px; height: 13px; }
+  .cv-rail { display: none; }
+  .cv-nodes i { width: 5px; height: 5px; }
+}
+
+@media (max-width: 520px) {
+  .cover { height: 140vh; }
+  .cv-core { width: min(56vmin, 200px); }
+  .cv-ridge { height: 20%; opacity: .26; }
+}
+
+/* ============================================================
+   减动效：不留任何时间轴的痕迹，直接给终态
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .cover { height: 100vh; }
+  .cv-pin { position: relative; }
+  .cv-core { transform: none; }
+  .cv-sq { transform: none !important; }
+  .cv-grid { transform: rotateX(14deg); }
+  .cv-scan { display: none; }
+  .cv-hint { display: none; }
+  .cv-pip { animation: none; transform: scale(1); opacity: 1; }
+  .cv-nodes i { opacity: .9; transform: scale(1) rotate(45deg); }
+  .cv-rail i { height: 100%; }
+}

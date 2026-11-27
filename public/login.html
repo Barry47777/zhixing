@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="light" />
+<title>知行 · 登录</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f5f6f8;
+    --panel: #ffffff;
+    --ink: #171a20;
+    --muted: #7b8492;
+    --faint: #a6aeba;
+    --line: #e5e8ee;
+    --accent: #4f6bed;
+    --accent-2: #7c5ce7;
+    --pink: #c084fc;
+    --danger: #d8443f;
+    --ok: #2e9b70;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    display: grid;
+    place-items: center;
+    min-height: 100dvh;
+    padding: 28px 18px;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: "";
+    position: fixed; inset: -25%;
+    background:
+      radial-gradient(48% 42% at 22% 18%, rgba(79,107,237,.13), transparent 70%),
+      radial-gradient(44% 40% at 82% 76%, rgba(192,132,252,.12), transparent 70%),
+      radial-gradient(30% 30% at 70% 12%, rgba(124,92,231,.08), transparent 70%);
+    pointer-events: none;
+    animation: breathe 9s ease-in-out infinite alternate;
+  }
+  @keyframes breathe { from { opacity: .65; transform: scale(1); } to { opacity: 1; transform: scale(1.04); } }
+
+  .wrap { position: relative; width: min(420px, 100%); animation: rise .5s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  .brand { display: flex; flex-direction: column; align-items: center; margin-bottom: 26px; }
+  .logo {
+    width: 62px; height: 62px; border-radius: 18px;
+    background: linear-gradient(150deg, #6279f0 0%, #4f6bed 55%, #7c5ce7 100%);
+    box-shadow: 0 16px 36px -18px rgba(79,107,237,.75);
+    display: grid; place-items: center;
+  }
+  .logo svg { width: 34px; height: 34px; }
+  .brand h1 { margin: 14px 0 3px; font-size: 22px; font-weight: 650; letter-spacing: -.02em; }
+  .brand p { margin: 0; font-size: 12.5px; color: var(--muted); letter-spacing: .02em; }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 26px 26px 22px;
+    box-shadow: 0 18px 48px -30px rgba(35,44,80,.42);
+  }
+  .card h2 { margin: 0 0 5px; font-size: 16px; font-weight: 650; }
+  .card .desc { margin: 0 0 20px; font-size: 12px; line-height: 1.65; color: var(--muted); }
+
+  .field { margin-bottom: 14px; }
+  .field label { display: block; margin-bottom: 6px; font-size: 11.5px; font-weight: 600; color: #555e6d; }
+  .field input {
+    width: 100%; height: 40px; padding: 0 12px;
+    border: 1px solid var(--line); border-radius: 10px;
+    background: #fbfcfd; color: var(--ink);
+    font: inherit; font-size: 13px;
+    outline: none; transition: border-color .16s, box-shadow .16s, background .16s;
+  }
+  .field input:focus {
+    border-color: var(--accent); background: #fff;
+    box-shadow: 0 0 0 3px rgba(79,107,237,.11);
+  }
+  .field input::placeholder { color: #b7bec9; }
+  .field small { display: block; margin-top: 5px; font-size: 10.5px; color: var(--faint); }
+
+  .bar { height: 3px; border-radius: 99px; background: #edf0f4; margin-top: 8px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--pink)); transition: width .22s; }
+
+  .err {
+    display: none; margin: 0 0 14px; padding: 9px 11px;
+    border: 1px solid rgba(216,68,63,.2); border-radius: 9px;
+    background: rgba(216,68,63,.06); color: var(--danger); font-size: 11.5px; line-height: 1.5;
+  }
+  .err.show { display: block; }
+
+  .primary {
+    width: 100%; height: 42px; margin-top: 6px;
+    border: 0; border-radius: 10px; cursor: pointer;
+    color: #fff; font: inherit; font-size: 13px; font-weight: 650;
+    background: linear-gradient(100deg, #4f6bed, #6b5ce7);
+    box-shadow: 0 10px 22px -12px rgba(79,107,237,.8);
+    transition: transform .15s, box-shadow .15s, opacity .15s;
+  }
+  .primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 14px 26px -12px rgba(79,107,237,.9); }
+  .primary:active:not(:disabled) { transform: translateY(0) scale(.995); }
+  .primary:disabled { opacity: .55; cursor: default; }
+
+  .linkrow { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+  .link {
+    border: 0; padding: 0; background: none; cursor: pointer;
+    color: var(--accent); font: inherit; font-size: 11.5px; font-weight: 600;
+  }
+  .link:hover { text-decoration: underline; }
+  .link.ghost { color: var(--muted); font-weight: 500; }
+
+  .note {
+    margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line);
+    font-size: 10.5px; line-height: 1.75; color: var(--faint);
+  }
+  .note b { color: var(--muted); font-weight: 600; }
+
+  .mask {
+    display: none; position: fixed; inset: 0; z-index: 10;
+    background: rgba(20,24,34,.42); backdrop-filter: blur(6px);
+    place-items: center; padding: 20px;
+  }
+  .mask.show { display: grid; }
+  .code-card {
+    width: min(420px, 100%);
+    background: #fff; border: 1px solid var(--line); border-radius: 18px;
+    padding: 26px; box-shadow: 0 24px 60px -24px rgba(20,24,34,.5);
+    animation: rise .35s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .code-card h3 { margin: 0 0 6px; font-size: 16px; }
+  .code-card p { margin: 0 0 16px; font-size: 11.5px; line-height: 1.7; color: var(--muted); }
+  .code {
+    display: block; width: 100%; padding: 13px 10px; text-align: center;
+    border: 1px dashed #c7cfdd; border-radius: 10px; background: #f8f9fc;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 16px; font-weight: 700; letter-spacing: .12em; color: #2f3a55;
+    user-select: all;
+  }
+  .code-card .warn { margin: 12px 0 18px; color: var(--danger); font-size: 11px; }
+  .code-actions { display: flex; gap: 9px; }
+  .code-actions .primary { margin: 0; }
+  .ghost-btn {
+    flex: none; white-space: nowrap;
+    height: 42px; padding: 0 16px; border: 1px solid var(--line); border-radius: 10px;
+    background: #fff; color: var(--muted); font: inherit; font-size: 12px; cursor: pointer;
+  }
+  .ghost-btn:hover { background: var(--bg); color: var(--ink); }
+
+  .booting { text-align: center; color: var(--muted); font-size: 12.5px; padding: 40px 0; }
+
+  @media (max-width: 480px) {
+    .card { padding: 22px 18px 18px; }
+    .brand { margin-bottom: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap" id="wrap">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 15h28M14 10v10M34 10v10" />
+          <rect x="12" y="22" width="24" height="16" rx="3" />
+          <path d="M18 30l4 4 8-9" />
+        </svg>
+      </div>
+      <h1>知行</h1>
+      <p>工作与思考，同一张桌面</p>
+    </div>
+
+    <div class="card" id="card">
+      <div class="booting" id="booting">正在检查本机账户…</div>
+
+      <form id="form" style="display:none" autocomplete="on">
+        <h2 id="title">欢迎回来</h2>
+        <p class="desc" id="desc">输入你的账户密码，打开工作台。</p>
+
+        <div class="err" id="err"></div>
+
+        <div class="field" id="userField">
+          <label for="username">账户名</label>
+          <input id="username" name="username" type="text" autocomplete="username" placeholder="给自己起个名字" maxlength="32" />
+        </div>
+
+        <div class="field" id="codeField" style="display:none">
+          <label for="recovery">恢复码</label>
+          <input id="recovery" type="text" autocomplete="off" spellcheck="false" placeholder="ZX-XXXX-XXXX-XXXX" />
+          <small>注册时保存的那串字符，不区分大小写和横杠。</small>
+        </div>
+
+        <div class="field" id="pwField">
+          <label for="password" id="pwLabel">密码</label>
+          <input id="password" type="password" autocomplete="current-password" placeholder="输入密码" maxlength="200" />
+          <div class="bar" id="strength"><i></i></div>
+        </div>
+
+        <div class="field" id="pw2Field" style="display:none">
+          <label for="password2">确认密码</label>
+          <input id="password2" type="password" autocomplete="new-password" placeholder="再输一次" maxlength="200" />
+        </div>
+
+        <button class="primary" id="submit" type="submit">登录</button>
+
+        <div class="linkrow">
+          <button class="link ghost" id="switchBtn" type="button"></button>
+          <button class="link" id="forgotBtn" type="button">忘记密码？</button>
+        </div>
+
+        <div class="note" id="note">
+          <b>这是本机账户</b>，只用来挡住别人打开你的电脑后直接查看数据；所有内容仍然只存在这台机器上，不会联网上传。
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="mask" id="mask">
+    <div class="code-card">
+      <h3>请立刻保存恢复码</h3>
+      <p id="codeIntro">这是唯一一次显示。忘记密码时，靠它把密码重置回来。</p>
+      <code class="code" id="codeText">—</code>
+      <p class="warn">截图或抄在纸上，放到你记得住的地方。丢失后无法找回已加密的数据。</p>
+      <div class="code-actions">
+        <button class="ghost-btn" id="copyBtn" type="button">复制</button>
+        <button class="primary" id="doneBtn" type="button">我已保存，进入工作台</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var bootEl = $('booting'), form = $('form'), errEl = $('err');
+  var userField = $('userField'), codeField = $('codeField'), pwField = $('pwField'), pw2Field = $('pw2Field');
+  var userEl = $('username'), codeEl = $('recovery'), pwEl = $('password'), pw2El = $('password2');
+  var titleEl = $('title'), descEl = $('desc'), pwLabel = $('pwLabel'), submitEl = $('submit');
+  var switchBtn = $('switchBtn'), forgotBtn = $('forgotBtn'), strengthEl = $('strength'), strengthBar = strengthEl.querySelector('i');
+  var mask = $('mask'), codeText = $('codeText');
+
+  var configured = false;
+  var mode = 'login'; // login | register | reset
+  var pendingCode = '';
+
+  function showErr(msg) {
+    errEl.textContent = msg || '';
+    errEl.className = msg ? 'err show' : 'err';
+  }
+
+  function setMode(next) {
+    mode = next;
+    showErr('');
+    userField.style.display = (mode === 'reset') ? 'none' : '';
+    codeField.style.display = (mode === 'reset') ? '' : 'none';
+    pw2Field.style.display = (mode === 'register') ? '' : 'none';
+    strengthEl.style.display = (mode === 'register' || mode === 'reset') ? '' : 'none';
+    pwEl.autocomplete = (mode === 'login') ? 'current-password' : 'new-password';
+    userEl.placeholder = (mode === 'register') ? '给自己起个名字' : '输入账户名';
+
+    if (mode === 'register') {
+      titleEl.textContent = '第一次使用，先设个账户';
+      descEl.textContent = '账户和密码只保存在这台机器上。设好后每次打开都要登录。';
+      pwLabel.textContent = '设置密码';
+      submitEl.textContent = '创建账户并进入';
+      switchBtn.textContent = '';
+      forgotBtn.style.display = 'none';
+    } else if (mode === 'reset') {
+      titleEl.textContent = '用恢复码重置密码';
+      descEl.textContent = '输入注册时保存的恢复码，再设一个新密码。';
+      pwLabel.textContent = '新密码';
+      submitEl.textContent = '重置密码并进入';
+      switchBtn.textContent = '← 返回登录';
+      forgotBtn.style.display = 'none';
+      setTimeout(function () { codeEl.focus(); }, 30);
+    } else {
+      titleEl.textContent = '欢迎回来';
+      descEl.textContent = '输入你的账户密码，打开工作台。';
+      pwLabel.textContent = '密码';
+      submitEl.textContent = '登录';
+      switchBtn.textContent = '';
+      forgotBtn.style.display = '';
+      setTimeout(function () { pwEl.focus(); }, 30);
+    }
+  }
+
+  function strength() {
+    var v = pwEl.value;
+    var n = 0;
+    if (v.length >= 8) n += 1;
+    if (v.length >= 12) n += 1;
+    if (/[A-Za-z]/.test(v) && /\d/.test(v)) n += 1;
+    if (/[^A-Za-z0-9]/.test(v)) n += 1;
+    var pct = v ? Math.max(12, n * 25) : 0;
+    strengthBar.style.width = pct + '%';
+  }
+
+  function enter() { location.replace('./#/today'); }
+
+  function api(path, body) {
+    return fetch('/api/auth/' + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(body || {}),
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, data: j }; });
+    });
+  }
+
+  function showCode(code, isReset) {
+    pendingCode = code;
+    codeText.textContent = code;
+    $('codeIntro').textContent = isReset
+      ? '新恢复码已生成，旧的立刻作废。这是唯一一次显示。'
+      : '这是唯一一次显示。忘记密码时，靠它把密码重置回来。';
+    mask.classList.add('show');
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    showErr('');
+    var pw = pwEl.value;
+    if (pw.length < 8) { showErr('密码至少 8 位'); pwEl.focus(); return; }
+
+    var path, body;
+    if (mode === 'register') {
+      if (!userEl.value.trim()) { showErr('请填写账户名'); userEl.focus(); return; }
+      if (pw !== pw2El.value) { showErr('两次输入的密码不一样'); pw2El.focus(); return; }
+      path = 'register';
+      body = { username: userEl.value.trim(), password: pw, confirm: pw2El.value };
+    } else if (mode === 'reset') {
+      if (!codeEl.value.trim()) { showErr('请填写恢复码'); codeEl.focus(); return; }
+      path = 'reset';
+      body = { recoveryCode: codeEl.value.trim(), newPassword: pw };
+    } else {
+      path = 'login';
+      body = { username: userEl.value.trim(), password: pw };
+    }
+
+    submitEl.disabled = true;
+    submitEl.textContent = '请稍候…';
+    api(path, body).then(function (r) {
+      submitEl.disabled = false;
+      var d = r.data || {};
+      if (r.status !== 200 || !d.ok) {
+        showErr(d.error || '操作没有成功，请重试');
+        submitEl.textContent = (mode === 'register' ? '创建账户并进入' : mode === 'reset' ? '重置密码并进入' : '登录');
+        if (d.configured === false) { configured = false; setMode('register'); }
+        return;
+      }
+      configured = true;
+      if (d.recoveryCode) { showCode(d.recoveryCode, mode === 'reset'); }
+      else enter();
+    }).catch(function (err) {
+      submitEl.disabled = false;
+      submitEl.textContent = '登录';
+      showErr('连不上本地服务：' + (err && err.message ? err.message : '未知错误'));
+    });
+  });
+
+  pwEl.addEventListener('input', strength);
+  switchBtn.addEventListener('click', function () { if (mode === 'reset') setMode('login'); });
+  forgotBtn.addEventListener('click', function () { setMode('reset'); });
+
+  $('copyBtn').addEventListener('click', function () {
+    var done = function () { $('copyBtn').textContent = '已复制'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(pendingCode).then(done, done);
+    else { codeText.select(); try { document.execCommand('copy'); } catch (_) {} done(); }
+  });
+  $('doneBtn').addEventListener('click', enter);
+
+  fetch('/api/auth/status', { cache: 'no-store', credentials: 'same-origin' })
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (j.authenticated) { enter(); return; }
+      configured = !!j.configured;
+      bootEl.style.display = 'none';
+      form.style.display = '';
+      setMode(configured ? 'login' : 'register');
+    })
+    .catch(function () {
+      bootEl.textContent = '连不上本地服务，请确认知行正在运行。';
+    });
+})();
+</script>
+</body>
+</html>

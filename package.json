@@ -1,0 +1,32 @@
+{
+  "name": "zhixing",
+  "private": true,
+  "version": "1.0.0",
+  "description": "知行 —— 工作与思考，同一张桌面",
+  "type": "commonjs",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 7901",
+    "server": "node server/index.js --dev --port 7900",
+    "build": "vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "check": "npm run typecheck && vite build",
+    "start": "node server/index.js --open",
+    "serve": "node server/index.js",
+    "test": "node scripts/acceptance.mjs",
+    "build:exe": "node scripts/build-exe.mjs"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "esbuild": "^0.28.2",
+    "postject": "^1.0.0-alpha.6",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "vue-tsc": "^2.2.0"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  }
+}

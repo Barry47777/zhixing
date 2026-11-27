@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>知行 · 正在启动</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f5f6f8;
+    color: #14161a;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* 背景柔光，和 Studio Log 的浅色卡片气质一致 */
+  body::before {
+    content: "";
+    position: fixed; inset: -20%;
+    background:
+      radial-gradient(50% 45% at 50% 45%, rgba(79,107,237,.10), transparent 70%),
+      radial-gradient(40% 40% at 70% 30%, rgba(167,139,250,.08), transparent 70%);
+    pointer-events: none;
+    animation: breathe 6s ease-in-out infinite alternate;
+  }
+  @keyframes breathe { from { opacity: .65; } to { opacity: 1; } }
+
+  .wrap {
+    position: relative;
+    width: min(420px, 86vw);
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+    opacity: 0; transform: translateY(10px);
+    animation: rise .6s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  .logo {
+    width: 76px; height: 76px; border-radius: 20px;
+    background: linear-gradient(150deg, #6279f0 0%, #4f6bed 55%, #7c5ce7 100%);
+    box-shadow: 0 16px 40px -18px rgba(79,107,237,.7);
+    display: grid; place-items: center;
+    animation: pop .7s cubic-bezier(.2,.9,.25,1.2) both;
+  }
+  @keyframes pop { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .logo svg { width: 42px; height: 42px; }
+  .logo svg path, .logo svg rect {
+    stroke-dasharray: 200; stroke-dashoffset: 200;
+    animation: draw 1.1s .25s cubic-bezier(.4,0,.2,1) forwards;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+
+  h1 {
+    margin: 24px 0 4px;
+    font-size: 22px; font-weight: 650; letter-spacing: -.02em;
+  }
+  .tagline { margin: 0; font-size: 12.5px; color: #838a96; letter-spacing: .02em; }
+
+  .track {
+    margin-top: 34px;
+    width: 100%; height: 4px; border-radius: 99px;
+    background: #e5e8ed; overflow: hidden;
+  }
+  .bar {
+    height: 100%; width: 0%; border-radius: 99px;
+    background: linear-gradient(90deg, #4f6bed, #7c5ce7, #c084fc);
+    background-size: 200% 100%;
+    transition: width .35s cubic-bezier(.2,.8,.2,1);
+    animation: flow 2s linear infinite;
+  }
+  @keyframes flow { to { background-position: -200% 0; } }
+
+  .status {
+    margin-top: 14px; min-height: 18px;
+    font-size: 11.5px; color: #838a96;
+    font-variant-numeric: tabular-nums;
+  }
+  .status .dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #4f6bed; margin-right: 6px; animation: blink 1.2s infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .err { color: #d8443f; }
+
+  .hint { margin-top: 30px; font-size: 10.5px; color: #a8afba; line-height: 1.7; }
+
+  body.done .wrap { animation: vanish .45s .15s ease forwards; }
+  @keyframes vanish { to { opacity: 0; transform: scale(.98); filter: blur(4px); } }
+  body.done { animation: fadebg .45s ease forwards; }
+  @keyframes fadebg { to { background: #fff; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 15h28M14 10v10M34 10v10" />
+        <rect x="12" y="22" width="24" height="16" rx="3" />
+        <path d="M18 30l4 4 8-9" />
+      </svg>
+    </div>
+    <h1>知行</h1>
+    <p class="tagline">工作与思考，同一张桌面</p>
+    <div class="track"><div class="bar" id="bar"></div></div>
+    <div class="status" id="status"><span class="dot"></span>正在启动本地服务…</div>
+    <div class="hint">数据保存在本机的 data 目录，不会上传任何内容</div>
+  </div>
+
+<script>
+(function () {
+  var bar = document.getElementById('bar');
+  var status = document.getElementById('status');
+  var pct = 0;
+  var target = 20;
+  var done = false;
+  var destination = './login.html';
+
+  function setProgress(v) {
+    if (v > pct) pct = v;
+    bar.style.width = pct + '%';
+  }
+  var tick = setInterval(function () {
+    if (done) return;
+    setProgress(pct + (target - pct) * 0.12);
+  }, 90);
+
+  function say(text, isErr) {
+    status.innerHTML = (isErr ? '' : '<span class="dot"></span>') + text;
+    if (isErr) status.className = 'status err';
+  }
+
+  function enter() {
+    if (done) return;
+    done = true;
+    clearInterval(tick);
+    setProgress(100);
+    say('已就绪，正在进入…');
+    setTimeout(function () { location.replace(destination); }, 320);
+  }
+
+  var tries = 0;
+  var maxTries = 120; // 最多约 12 秒
+  function poll() {
+    fetch('/api/health', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) {
+        if (j && j.ok && j.app === 'zhixing') {
+          target = 85;
+          destination = j.authenticated ? './#/today' : './login.html';
+          say(j.authenticated ? '服务已就绪，正在载入工作台…' : '服务已就绪，正在打开登录页…');
+          setTimeout(enter, 420);
+          return;
+        }
+        next();
+      })
+      .catch(function () { next(); });
+  }
+  function next() {
+    tries += 1;
+    target = Math.min(88, 20 + tries * 2.4);
+    if (tries % 5 === 0) say('正在启动本地服务… ' + Math.min(tries, maxTries) + '/' + maxTries);
+    if (tries >= maxTries) {
+      say('启动超时，请检查 data/errors.log', true);
+      return;
+    }
+    setTimeout(poll, 100);
+  }
+  setTimeout(poll, 260);
+})();
+</script>
+</body>
+</html>

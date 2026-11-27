@@ -1,0 +1,146 @@
+/* ============================================================
+   知行 · 双皮肤设计令牌
+   工作区（今日/日历/项目/洞察/设置）＝ Studio Log 原皮肤
+   灵感 / 复盘 ＝ 灵感 · Edge 原皮肤（见 styles/edge/*.scoped.css）
+   两套皮肤各自独立：html[data-skin] 决定用哪一套变量。
+   ============================================================ */
+
+:root {
+  --font-scale: 1;
+  --motion: 1;
+
+  --font: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+}
+
+/* ------------------------------------------------------------
+   Studio Log 皮肤
+   ------------------------------------------------------------ */
+
+:root[data-skin="studio"] {
+  --bg: #f5f6f8;
+  --bg-soft: #eef0f4;
+  --panel: #ffffff;
+  --panel-2: #fafbfc;
+  --ink: #14161a;
+  --ink-2: #444a53;
+  --muted: #838a96;
+  --faint: #a8afba;
+  --line: #e5e8ed;
+  --line-soft: #eef0f4;
+  --accent: #4f6bed;
+  --accent-soft: rgba(79, 107, 237, 0.12);
+  --accent-mid: rgba(79, 107, 237, 0.24);
+  --danger: #d8443f;
+  --danger-soft: rgba(216, 68, 63, 0.1);
+  --warn: #b7791f;
+  --ok: #15803d;
+  --ok-soft: rgba(21, 128, 61, 0.1);
+  --shadow-xs: 0 1px 2px rgba(16, 18, 22, 0.04);
+  --shadow-sm: 0 1px 3px rgba(16, 18, 22, 0.06), 0 6px 16px -12px rgba(16, 18, 22, 0.18);
+  --shadow-md: 0 12px 32px -18px rgba(16, 18, 22, 0.28), 0 2px 8px rgba(16, 18, 22, 0.04);
+  --shadow-lg: 0 32px 70px -30px rgba(16, 18, 22, 0.38), 0 8px 24px -16px rgba(16, 18, 22, 0.2);
+
+  --r-xs: 6px;
+  --r-sm: 9px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+
+  --sidebar-w: 238px;
+  --drawer-w: 430px;
+  --topbar-h: 64px;
+  --cell-min: 82px;
+  --pad: 24px;
+}
+
+:root[data-skin="studio"][data-theme="dark"] {
+  --bg: #0c0e12;
+  --bg-soft: #12151b;
+  --panel: #171a21;
+  --panel-2: #1c2027;
+  --ink: #eef1f5;
+  --ink-2: #b9c0ca;
+  --muted: #838c9a;
+  --faint: #6b7482;
+  --line: #2b313b;
+  --line-soft: #242932;
+  --accent: #6d86ff;
+  --accent-soft: rgba(109, 134, 255, 0.14);
+  --accent-mid: rgba(109, 134, 255, 0.3);
+  --danger: #f0726c;
+  --danger-soft: rgba(240, 114, 108, 0.12);
+  --warn: #dfa443;
+  --ok: #4ec98a;
+  --ok-soft: rgba(78, 201, 138, 0.12);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 20px -14px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 16px 36px -20px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 40px 80px -34px rgba(0, 0, 0, 0.8);
+}
+
+:root[data-skin="studio"][data-density="compact"] {
+  --cell-min: 62px;
+  --pad: 18px;
+  --topbar-h: 58px;
+}
+
+/* ------------------------------------------------------------
+   Edge 皮肤的兜底变量
+   （真正的色板在 styles/edge/styles.scoped.css 里，这里只补
+     Studio 基础样式会读到、而 Edge 没定义的几个名字）
+   ------------------------------------------------------------ */
+
+:root[data-skin="edge"] {
+  --ink: #f2eefb;
+  --ink-2: #a49db8;
+  --muted: #8b83a3;
+  --faint: #6f6885;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-soft: rgba(255, 255, 255, 0.055);
+  --bg-soft: #0f0d17;
+  --panel-2: #12101b;
+  --accent: #a78bfa;
+  --accent-soft: rgba(167, 139, 250, 0.14);
+  --accent-mid: rgba(167, 139, 250, 0.32);
+  --danger: #ff8080;
+  --danger-soft: rgba(255, 128, 128, 0.14);
+  --warn: #fbbf24;
+  --ok: #4ec98a;
+  --ok-soft: rgba(78, 201, 138, 0.14);
+  --shadow-xs: 0 2px 10px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 6px 22px -14px rgba(0, 0, 0, 0.85);
+  --shadow-md: 0 18px 44px -18px rgba(0, 0, 0, 0.85);
+  --shadow-lg: 0 44px 100px -40px rgba(0, 0, 0, 0.95);
+  --r-xs: 8px;
+  --r-sm: 11px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 26px;
+  --ease: cubic-bezier(0.22, 0.8, 0.28, 1);
+}
+
+:root[data-skin="edge"][data-theme="light"] {
+  --ink: #1c1630;
+  --ink-2: #5b5473;
+  --muted: #6f6885;
+  --faint: #8a83a0;
+  --line: rgba(24, 16, 48, 0.09);
+  --line-soft: rgba(24, 16, 48, 0.05);
+  --bg-soft: #ffffff;
+  --panel-2: #fbfaff;
+  --accent: #7c3aed;
+  --accent-soft: rgba(139, 92, 246, 0.12);
+  --accent-mid: rgba(139, 92, 246, 0.26);
+  --danger: #d1432f;
+  --danger-soft: rgba(209, 67, 47, 0.1);
+  --warn: #a86408;
+  --ok: #0e9f6e;
+  --ok-soft: rgba(14, 159, 110, 0.1);
+}
+
+/* 字体缩放 / 减少动效：两套皮肤都尊重 */
+:root {
+  --dur: calc(1ms * var(--motion));
+}

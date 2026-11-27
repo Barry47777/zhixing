@@ -1,0 +1,79 @@
+/* ===========================================================
+   设计令牌 —— 颜色 / 字号 / 间距 / 圆角 / 阴影
+   切换深色主题只改变量，组件不写死颜色
+   =========================================================== */
+
+:root {
+  --bg: #f5f6f8;
+  --bg-soft: #eef0f4;
+  --panel: #ffffff;
+  --panel-2: #fafbfc;
+  --ink: #14161a;
+  --ink-2: #444a53;
+  --muted: #838a96;
+  --faint: #a8afba;
+  --line: #e5e8ed;
+  --line-soft: #eef0f4;
+  --accent: #4f6bed;
+  --accent-soft: rgba(79, 107, 237, .12);
+  --accent-mid: rgba(79, 107, 237, .24);
+  --danger: #d8443f;
+  --danger-soft: rgba(216, 68, 63, .1);
+  --warn: #b7791f;
+  --ok: #15803d;
+  --ok-soft: rgba(21, 128, 61, .1);
+  --shadow-xs: 0 1px 2px rgba(16, 18, 22, .04);
+  --shadow-sm: 0 1px 3px rgba(16, 18, 22, .06), 0 6px 16px -12px rgba(16, 18, 22, .18);
+  --shadow-md: 0 12px 32px -18px rgba(16, 18, 22, .28), 0 2px 8px rgba(16, 18, 22, .04);
+  --shadow-lg: 0 32px 70px -30px rgba(16, 18, 22, .38), 0 8px 24px -16px rgba(16, 18, 22, .2);
+
+  --r-xs: 6px;
+  --r-sm: 9px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+
+  --sidebar-w: 238px;
+  --drawer-w: 430px;
+  --topbar-h: 64px;
+  --cell-min: 82px;
+  --pad: 24px;
+
+  --font: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+
+  --motion: 1;
+  --font-scale: 1;
+}
+
+[data-theme="dark"] {
+  --bg: #0c0e12;
+  --bg-soft: #12151b;
+  --panel: #171a21;
+  --panel-2: #1c2027;
+  --ink: #eef1f5;
+  --ink-2: #b9c0ca;
+  --muted: #838c9a;
+  --faint: #6b7482;
+  --line: #2b313b;
+  --line-soft: #242932;
+  --accent: #6d86ff;
+  --accent-soft: rgba(109, 134, 255, .14);
+  --accent-mid: rgba(109, 134, 255, .3);
+  --danger: #f0726c;
+  --danger-soft: rgba(240, 114, 108, .12);
+  --warn: #dfa443;
+  --ok: #4ec98a;
+  --ok-soft: rgba(78, 201, 138, .12);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, .3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, .4), 0 8px 20px -14px rgba(0, 0, 0, .6);
+  --shadow-md: 0 16px 36px -20px rgba(0, 0, 0, .7);
+  --shadow-lg: 0 40px 80px -34px rgba(0, 0, 0, .8);
+}
+
+[data-density="compact"] {
+  --cell-min: 62px;
+  --pad: 18px;
+  --topbar-h: 58px;
+}
