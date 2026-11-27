@@ -1,0 +1,12 @@
+{
+  "name": "知行 · 工作台",
+  "short_name": "知行",
+  "description": "工作记录、灵感速记与复盘校准，放在同一张桌面。",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f6f8",
+  "theme_color": "#4f6bed",
+  "icons": [
+    { "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f5f6f8" />
+    <meta name="description" content="知行 —— 把工作记录、灵感速记与复盘校准放进同一张桌面。" />
+    <title>知行 · 工作台</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <script>
+      // 首屏主题，避免闪白
+      (function () {
+        try {
+          var s = JSON.parse(localStorage.getItem('zhixing.settings') || '{}')
+          var theme = s.theme || 'light'
+          var dark = theme === 'dark' || (theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
+          var root = document.documentElement
+          root.dataset.theme = dark ? 'dark' : 'light'
+          if (s.accent) root.dataset.accent = s.accent
+          if (s.density) root.dataset.density = s.density
+          if (s.reduceMotion) root.dataset.reduceMotion = '1'
+          if (s.fontScale) root.style.setProperty('--font-scale', String(s.fontScale))
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#0c0e12' : '#f5f6f8')
+        } catch (e) {}
+      })()
+    </script>
+    <script type="module" crossorigin src="./assets/index-RJYHfXSX.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CL6R4p7V.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
